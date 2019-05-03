@@ -6,9 +6,10 @@ function Button() {
             }
         </style>
         <style>
-            button {
+            .my-button {
                 color: red;
             }
         </style>
+        <button class="my-button">Hello world</button>
     `);
 }
