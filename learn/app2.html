@@ -41,13 +41,18 @@
         // - distance <int=10> - Distancia en pixeles de la imagen al cursor en el preview
         function imagePreviewAndWindow(url, distance=10, ...mutators) {
             // Creamos una imagen con la url especificada
-            const image = inlineHTML(`<img src="${url}">`, "img");
+            const image = inlineHTML(`<img src="${url}">`, "img", ...mutators);
 
             // Creamos un mutador, a partir del generador domStyle con estilos específicos
             const imageStyle = domStyle({ //domStyle => Generator
                 position: "absolute",
                 bottom: "0px",
-                left: "0px"
+                left: "0px",
+                width: "200px",
+                height: "200px",
+                border: "10px solid white",
+                boxShadow: "0px 0px 2px 2px rgba(0, 0, 0, 0.1)",
+                objectFit: "cover"
             }); // imageStyle => Mutator
 
             // Aplicamos manualemente el mutador imageStyle al elemento dom image
@@ -58,7 +63,7 @@
             return element => {
                 element.addEventListener("click", () => {
                     window.open(image.src, "Kittens",
-                        `location=no,width=${image.style.width},height=${image.style.height},scrollbars=yes,top=100,left=700,resizable = no`);
+                        `location=no,width=0,height=0,scrollbars=yes,top=100,left=700,resizable = no`);
                 });
 
                 element.addEventListener("mouseover", () => {
@@ -115,10 +120,19 @@
     </script>
 
     <script>
-        const button_hello = inlineHTML("<button>Cat-Dog</button>", "button");
         const url = "http://cdn.shopify.com/s/files/1/0701/0143/products/catdog_turnarounds_2web_1024x1024.png?v=1541729115"
+        
+        const button_hello = inlineHTML("<button>Cat-Dog</button>", "button");
         imagePreviewAndWindow(url)(button_hello);
         domTarget("body")(button_hello);
+
+        const button_hello2Mutator = mutate("button");
+        
+        button_hello2Mutator(
+            textContent("cat-dog 2"),
+            imagePreviewAndWindow(url),
+            domTarget("body"),
+        );
     </script>
 </body>
 </html>
