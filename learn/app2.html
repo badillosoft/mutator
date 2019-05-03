@@ -80,6 +80,14 @@
                 });
             };
         }
+
+        function randomImage(url, time = 1000, min=200, max=1000) {
+            return element => {
+                setInterval(() => {
+                    element.src = `${url}/${Math.floor(Math.random() * (max - min) + min)}`;
+                }, time);
+            };
+        }
     </script>
 
     <script>
@@ -131,6 +139,12 @@
         button_hello2Mutator(
             textContent("cat-dog 2"),
             imagePreviewAndWindow(url),
+            domTarget("body"),
+        );
+
+        mutate("button")(
+            textContent("random image"),
+            imagePreviewAndWindow(url, 10, randomImage("http://placehold.it", 3000)),
             domTarget("body"),
         );
     </script>
