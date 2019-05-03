@@ -29,6 +29,8 @@
 // * Change `inlineHTML(html)`
 // - 2019/05/03 (v1.0 rev5)
 // * Add `domTarget([target])`
+// * Add `domDelegate(query, ...mutators)`
+// * Add `domRegistry(registers)`
 
 /**
  * <strong>Aplicador</strong> Muta un elemento cualquiera mediante mutadores. La función 
@@ -290,5 +292,25 @@ function domTarget(target=null) {
         }
         target = target || document.body;
         target.appendChild(element);
+    };
+}
+
+function domRegistry(registers) {
+    return element => {
+        for (let [id, query] of Object.entries(registers)) {
+            let i = 0;
+            for (let child of [...(element.querySelectorAll(query) || [])]) {
+                child.setAttribute(`data-id`, `${id}-${i++}`);
+            }
+        }
+    };
+};
+
+function domDelegate(query, ...mutators) {
+    return element => {
+        for (let child of [...(element.querySelectorAll(query) || [])]) {
+            let childMutator = mutate(child);
+            childMutator(...mutators);
+        }
     };
 }

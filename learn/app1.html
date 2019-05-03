@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>App 1</title>
+
+</head>
+<body>
+    <script src="https://badillosoft.github.io/mutator/mutator.js"></script>
+    <script src="https://badillosoft.github.io/mutator/mutator-learn.js"></script>
+
+    <script>
+        function boxShadow(x=0, y=0, s=2, b=2, color="rgba(0, 0, 0, 0.2)") {
+            return element => {
+                element.style.boxShadow = `${x}px ${y}px ${s}px ${b}px ${color}`;
+            };
+        }
+
+        function formStyle(padding=40, shadow=2) {
+            return element => {
+                element.style.display = "flex";
+                element.style.flexDirection = "column";
+                boxShadow(0, 0, shadow, shadow)(element);
+                element.style.padding = `${padding}px`;
+            };
+        }
+
+        function inputStyle(margin=10) {
+            return element => {
+                element.margin = `${margin}px`;
+            };
+        }
+    </script>
+
+    <script>
+        const formLogin = inlineHTML(`
+            <form class="form-login">
+                <input placeholder="Usuario">
+                <input type="password" placeholder="Contraseña">
+                <button>iniciar sesión</button>
+            </form>
+        `, "form");
+    
+        console.log(formLogin);
+
+        const formLoginMutator = mutate(formLogin);
+
+        formLoginMutator(formStyle(10, 2));
+        
+        formLoginMutator(
+            domDelegate("input", inputStyle(20))
+        );
+        
+
+        document.body.appendChild(formLogin);
+    </script>
+</body>
+</html>
