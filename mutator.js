@@ -4,7 +4,7 @@
 // Github Account: badillosoft
 // Github Repository: https://github.com/badillosoft/mutator
 // Versión 1.0.0 (alpha)
-// Revitions:
+// Changelog:
 // - 2019/05/02 (v1.0 rev1)
 // * Add `mutate(element)`
 // * Add `async loadComponent(name[, baseURL, ext])`
@@ -25,6 +25,8 @@
 // * Remove `console.log` on `mutate`
 // * Change `loadComponents` to `load`
 // * Documentation of methods
+// - 2019/05/02 (v1.0 rev4)
+// * Change `inlineHTML(html)`
 
 /**
  * <strong>Aplicador</strong> Muta un elemento cualquiera mediante mutadores. La función 
@@ -112,7 +114,29 @@ async function load(name, baseURL = "./", ext = ".js") {
     await new Promise(resolve => script.addEventListener("load", resolve));
 };
 
-
+/**
+ * Ejecuta una serie de funciones, propagando una entrada nula, la cuál se actualiza
+ * con el valor retornado por el callback y es pasado al siguiente. Si el callback
+ * es asíncrono o devuelve una promesa, este esperará a que termine antes de
+ * ejecutar el siguiente.
+ * @param  {...any} callbacks Funciones a ejecutar, opcionalmente asíncronas
+ * @returns {any} El resultado transformado de la cadena de ejecuciones
+ * @example <caption>Ejecuta una función asíncrona que espera la carga de un <code>script</code></caption>
+ * run(async () => {
+ *  await load("example/Button");
+ *  // TODO: Utilizar Button()
+ * });
+ * @example <caption>Espera a que se descarguen una serie de <code>scripts</code></caption>
+ * run(() => {
+ *  return Promise.all([
+ *      load("example/Button"),
+ *      load("example/Input"),
+ *      // load more...
+ *  ]);
+ * }, () => {
+ *  // TODO: Usar las funciones definidas en los scripts cargados previamente
+ * });
+ */
 async function run(...callbacks) {
     let input = null;
     for (let callback of callbacks) {
@@ -121,19 +145,59 @@ async function run(...callbacks) {
     return input;
 }
 
-function inlineHTML(html) {
+/**
+ * Crea un elemento DOM a partir de un fragmento HTML. Estos serán contenidos en un div por lo
+ * que no es necesario definir un div principal. Si se define un query, en lugar de devolver
+ * el div principal, buscará mediante query selector el elemento específico y lo devolverá.
+ * De este modo se podrá usar una parte específica del fragmento HTML.
+ * @param {string} html Fragmento HTML que representa la interfaz. Serán contenidos en un div
+ * @param {string} query Query opcional para devolver un elemento específico usando `querySelector`
+ * @returns {HTMLElement} Elemento DOM con un div que contiene la maquetación del fragmento
+ * @example <caption>Crear un elemento DOM a partir de un fragmento HTML</caption>
+ * const button = inlineHTML(`<button>hello</button>`);
+ * // button es `<div><button>hello</button></div>`
+ * @example <caption>Crear un elemento DOM a partir de un fragmento HTML usando un query</caption>
+ * const button = inlineHTML(`<button>hello</button>`, "button");
+ * // button es `<button>hello</button>`
+ * @example <caption>Colocar una imagen el el body</caption>
+ * const image = inlineHTML(`<img src="http://placehold.it/400">`, "img");
+ * document.body.appendChild(image);
+ */
+function inlineHTML(html, query=null) {
     const div = document.createElement("div");
     // div.hidden = true;
     // document.body.appendChild(div);
     // div.innerHTML = html;
     const range = document.createRange();
     const fragment = range.createContextualFragment(html);
-    console.log(fragment);
+    //console.log(fragment);
     // range.selectNode(div);
     div.appendChild(fragment);
-    return mutate(div);
+    return query ? div.querySelector(query) : div;
 };
 
+/**
+ * Agrega los estilos especificados en el objeto de estilos. Cada clave equivale a los estilos
+ * usados en DOM, por ejemplo, `color`, `backgroundColor`, `justifyContent`. Observa que son
+ * las mismas propiedades que en CSS, sólo que al estilo datasets, usando la notación cammelCase
+ * en lugar de guiones `-`. Los mutadores pueden ser aplicados mediante {@link mutate} o individualmente.
+ * @param {Object.<string, string>} styles Objeto de estilos, cada clave equivale a element.style.keyName
+ * @returns {function} Devuelve un mutador que puede ser utilizado por {@link mutate}
+ * @example <caption>Muta los estilos de un botón</caption>
+ * const button = inlineHTML(`<button>hello world</button>`, "button");
+ * mutate(button)(domStyle({ backgroundColor: "black", color: "white", "border": "4px solid red" }));
+ * @example <caption>Muta los estilos de una imagen</caption>
+ * const image = inlineHTML(`<img src="http://placekitten.com/400">`, "img");
+ * // Observa que el mutador se puede aplicar individualemente
+ * domStyle({ border: "10px solid white", boxShadow: "0px 0px 4px 4px rgba(0, 0, 0, 0.2)" })(image);
+ * @example <caption>Reutiliza un mutador</caption>
+ * const imageMutator = domStyle({ border: "10px solid white", boxShadow: "0px 0px 4px 4px rgba(0, 0, 0, 0.2)" });
+ * const image1 = inlineHTML(`<img src="http://placekitten.com/400">`, "img");
+ * const image2 = inlineHTML(`<img src="http://placekitten.com/500">`, "img");
+ * // Observa que el mutador se puede aplicar individualemente
+ * imageMutator(image1);
+ * imageMutator(image2);
+ */
 function domStyle(styles) {
     return element => {
         for (let [key, value] of Object.entries(styles || {})) {

@@ -104,6 +104,385 @@
     
 
     
+    <h4 class="name" id="domStyle"><span class="type-signature"></span>domStyle<span class="signature">(styles)</span><span class="type-signature"> &rarr; {function}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Agrega los estilos especificados en el objeto de estilos. Cada clave equivale a los estilosusados en DOM, por ejemplo, `color`, `backgroundColor`, `justifyContent`. Observa que sonlas mismas propiedades que en CSS, sólo que al estilo datasets, usando la notación cammelCaseen lugar de guiones `-`. Los mutadores pueden ser aplicados mediante <a href="global.html#mutate">mutate</a> o individualmente.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>styles</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object.&lt;string, string></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Objeto de estilos, cada clave equivale a element.style.keyName</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="mutator.js.html">mutator.js</a>, <a href="mutator.js.html#line201">line 201</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    Devuelve un mutador que puede ser utilizado por <a href="global.html#mutate">mutate</a>
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">function</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+    <h5>Examples</h5>
+    
+        <p class="code-caption">Muta los estilos de un botón</p>
+    
+    <pre class="prettyprint"><code>const button = inlineHTML(`&lt;button>hello world&lt;/button>`, "button");mutate(button)(domStyle({ backgroundColor: "black", color: "white", "border": "4px solid red" }));</code></pre>
+
+        <p class="code-caption">Muta los estilos de una imagen</p>
+    
+    <pre class="prettyprint"><code>const image = inlineHTML(`&lt;img src="http://placekitten.com/400">`, "img");// Observa que el mutador se puede aplicar individualementedomStyle({ border: "10px solid white", boxShadow: "0px 0px 4px 4px rgba(0, 0, 0, 0.2)" })(image);</code></pre>
+
+        <p class="code-caption">Reutiliza un mutador</p>
+    
+    <pre class="prettyprint"><code>const imageMutator = domStyle({ border: "10px solid white", boxShadow: "0px 0px 4px 4px rgba(0, 0, 0, 0.2)" });const image1 = inlineHTML(`&lt;img src="http://placekitten.com/400">`, "img");const image2 = inlineHTML(`&lt;img src="http://placekitten.com/500">`, "img");// Observa que el mutador se puede aplicar individualementeimageMutator(image1);imageMutator(image2);</code></pre>
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="inlineHTML"><span class="type-signature"></span>inlineHTML<span class="signature">(html, query)</span><span class="type-signature"> &rarr; {HTMLElement}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Crea un elemento DOM a partir de un fragmento HTML. Estos serán contenidos en un div por loque no es necesario definir un div principal. Si se define un query, en lugar de devolverel div principal, buscará mediante query selector el elemento específico y lo devolverá.De este modo se podrá usar una parte específica del fragmento HTML.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+        <th>Default</th>
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>html</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last">Fragmento HTML que representa la interfaz. Serán contenidos en un div</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>query</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+                <td class="default">
+                
+                    null
+                
+                </td>
+            
+
+            <td class="description last">Query opcional para devolver un elemento específico usando `querySelector`</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="mutator.js.html">mutator.js</a>, <a href="mutator.js.html#line166">line 166</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    Elemento DOM con un div que contiene la maquetación del fragmento
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">HTMLElement</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+    <h5>Examples</h5>
+    
+        <p class="code-caption">Crear un elemento DOM a partir de un fragmento HTML</p>
+    
+    <pre class="prettyprint"><code>const button = inlineHTML(`&lt;button>hello&lt;/button>`);// button es `&lt;div>&lt;button>hello&lt;/button>&lt;/div>`</code></pre>
+
+        <p class="code-caption">Crear un elemento DOM a partir de un fragmento HTML usando un query</p>
+    
+    <pre class="prettyprint"><code>const button = inlineHTML(`&lt;button>hello&lt;/button>`, "button");// button es `&lt;button>hello&lt;/button>`</code></pre>
+
+        <p class="code-caption">Colocar una imagen el el body</p>
+    
+    <pre class="prettyprint"><code>const image = inlineHTML(`&lt;img src="http://placehold.it/400">`, "img");document.body.appendChild(image);</code></pre>
+
+
+
+        
+            
+
+    
+
+    
     <h4 class="name" id="load"><span class="type-signature">(async) </span>load<span class="signature">(name, baseURL, ext)</span><span class="type-signature"></span></h4>
     
 
@@ -269,7 +648,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="mutator.js.html">mutator.js</a>, <a href="mutator.js.html#line101">line 101</a>
+        <a href="mutator.js.html">mutator.js</a>, <a href="mutator.js.html#line103">line 103</a>
     </li></ul></dd>
     
 
@@ -421,7 +800,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="mutator.js.html">mutator.js</a>, <a href="mutator.js.html#line70">line 70</a>
+        <a href="mutator.js.html">mutator.js</a>, <a href="mutator.js.html#line72">line 72</a>
     </li></ul></dd>
     
 
@@ -495,6 +874,186 @@
 
 
         
+            
+
+    
+
+    
+    <h4 class="name" id="run"><span class="type-signature">(async) </span>run<span class="signature">(&hellip;callbacks)</span><span class="type-signature"> &rarr; {any}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Ejecuta una serie de funciones, propagando una entrada nula, la cuál se actualizacon el valor retornado por el callback y es pasado al siguiente. Si el callbackes asíncrono o devuelve una promesa, este esperará a que termine antes deejecutar el siguiente.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>callbacks</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">any</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                    &lt;repeatable><br>
+                
+                </td>
+            
+
+            
+
+            <td class="description last">Funciones a ejecutar, opcionalmente asíncronas</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="mutator.js.html">mutator.js</a>, <a href="mutator.js.html#line140">line 140</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    El resultado transformado de la cadena de ejecuciones
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">any</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+    <h5>Examples</h5>
+    
+        <p class="code-caption">Ejecuta una función asíncrona que espera la carga de un <code>script</code></p>
+    
+    <pre class="prettyprint"><code>run(async () => { await load("example/Button"); // TODO: Utilizar Button()});</code></pre>
+
+        <p class="code-caption">Espera a que se descarguen una serie de <code>scripts</code></p>
+    
+    <pre class="prettyprint"><code>run(() => { return Promise.all([     load("example/Button"),     load("example/Input"),     // load more... ]);}, () => { // TODO: Usar las funciones definidas en los scripts cargados previamente});</code></pre>
+
+
+
+        
     
 
     
@@ -510,13 +1069,13 @@
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#load">load</a></li><li><a href="global.html#mutate">mutate</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#domStyle">domStyle</a></li><li><a href="global.html#inlineHTML">inlineHTML</a></li><li><a href="global.html#load">load</a></li><li><a href="global.html#mutate">mutate</a></li><li><a href="global.html#run">run</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Thu May 02 2019 23:12:16 GMT-0500 (GMT-05:00)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Fri May 03 2019 10:02:41 GMT-0500 (GMT-05:00)
 </footer>
 
 <script> prettyPrint(); </script>
