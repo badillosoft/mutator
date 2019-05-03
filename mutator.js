@@ -286,7 +286,7 @@ function domProxyEvent(query, event, channel, mapper = (e => e)) {
 function domTarget(target=null) {
     return element => {
         if (typeof target === "string") {
-            target = querySelector(target);
+            target = document.querySelector(target);
         }
         target = target || document.body;
         target.appendChild(element);
