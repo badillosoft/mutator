@@ -55,63 +55,71 @@ function domStyle(styles) {
 	};
 };
 
-function addClassListStyle(className) {
-    return element => {
-        element.classList.add(className);
-    };
+function domAttribute(attributes) {
+	return element => {
+		for (let [key, value] of Object.entries(attributes || {})) {
+			element[key] = value;
+		}
+	};
 };
 
-function removeClassListStyle(className) {
-    return element => {
-        element.classList.remove(className);
-    };
+function domDataset(datasets, raw=false) {
+	return element => {
+		for (let [key, value] of Object.entries(datasets || {})) {
+            if (raw) {
+                element.setAttribute(`data-${key}`, value);
+                continue;
+            }
+            element.dataset[key] = value;
+		}
+	};
 };
 
-function colorStyle(color) {
-    return element => {
-        element.style.color = color;
-    };
+function domClassList(classNames) {
+	return element => {
+		for (let [key, value] of Object.entries(classNames || {})) {
+			element.classList[value ? "add" : "remove"](key);
+		}
+	};
 };
 
-function textContent(text) {
+function domMapEvent(event, channel, mapper=(e => e)) {
     return element => {
-        element.innerText = text || "text";
-    };
-};
-
-function clickEvent(callback) {
-    return element => {
-        element.addEventListener("click", e => {
-            const result = callback(e);
-            element.dataset.result = JSON.stringify(result);
+        element.addEventListener(event, e => {
+            const detail = e instanceof CustomEvent ? e.detail : e;
+            element.dispatchEvent(new CustomEvent(channel, {
+                detail: mapper(detail)
+            }));
         });
     };
-};
+}
 
-function lockElement(query) {
+function domEventToState(event, state, mapper=(e => e), raw=false) {
     return element => {
-        const child = element.querySelector(query);
-        if (child) {
-            element.addEventListener("@lock", () => {
-                child.disabled = true;
-            });
-            element.addEventListener("@unlock", () => {
-                child.disabled = false;
-            });
-        }
+        element.addEventListener(event, e => {
+            const detail = e instanceof CustomEvent ? e.detail : e;
+            const result = mapper(detail);
+            domDataset({ [state]: JSON.stringify(result) }, raw);
+        });
     };
-};
+}
 
-function lockElements(query) {
+function domStateToEvent(state, channel, mapper=(e => e), raw=false) {
     return element => {
-        const children = element.querySelectorAll(query);
-        for (let child of (children || [])) {
-            element.addEventListener("@lock", () => {
-                child.disabled = true;
-            });
-            element.addEventListener("@unlock", () => {
-                child.disabled = false;
-            });
-        }
+        const detail = JSON.parse(element.getAttribute( raw ? `data-${state}` : state));
+        element.dispatchEvent(new CustomEvent(channel, {
+            detail: mapper(detail)
+        }))
     };
-};
+}
+
+function domProxyEvent(query, event, channel, mapper=(e => e)) {
+    return element => {
+        const child = element.querySelectorAll(query);
+        child && child.addEventListener(event, e => {
+            element.dispatchEvent(new CustomEvent(channel, {
+                detail: mapper(e)
+            }));
+        });
+    };
+}
