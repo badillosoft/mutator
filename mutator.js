@@ -25,8 +25,10 @@
 // * Remove `console.log` on `mutate`
 // * Change `loadComponents` to `load`
 // * Documentation of methods
-// - 2019/05/02 (v1.0 rev4)
+// - 2019/05/03 (v1.0 rev4)
 // * Change `inlineHTML(html)`
+// - 2019/05/03 (v1.0 rev5)
+// * Add `domTarget([target])`
 
 /**
  * <strong>Aplicador</strong> Muta un elemento cualquiera mediante mutadores. La función 
@@ -278,5 +280,15 @@ function domProxyEvent(query, event, channel, mapper = (e => e)) {
                 detail: mapper(e)
             }));
         });
+    };
+}
+
+function domTarget(target=null) {
+    return element => {
+        if (typeof target === "string") {
+            target = querySelector(target);
+        }
+        target = target || document.body;
+        target.appendChild(element);
     };
 }
