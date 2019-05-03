@@ -29,10 +29,18 @@
 
         function inputStyle(margin=10) {
             return element => {
-                element.margin = `${margin}px`;
+                element.style.margin = `${margin}px`;
             };
         }
+
+        const batmanTheme = domStyle({
+            backgroundColor: "#222222",
+            marginBottom: "10px",
+            color: "yellow"
+        });
     </script>
+
+    <div id="panel"></div>
 
     <script>
         const formLogin = inlineHTML(`
@@ -48,13 +56,22 @@
         const formLoginMutator = mutate(formLogin);
 
         formLoginMutator(formStyle(10, 2));
+        // formLoginMutator(batmanTheme);
         
         formLoginMutator(
-            domDelegate("input", inputStyle(20))
+            // domDelegate("input", batmanTheme),
+            domDelegate("input", domStyle({
+                marginBottom: "10px",
+                color: "tomato"
+            })),
         );
-        
 
-        document.body.appendChild(formLogin);
+        formLoginMutator(domTarget("#panel"));
+
+        // const panel = document.querySelector("#panel");
+        // panel.appendChild(formLogin);
+
+        // document.body.appendChild(formLogin);
     </script>
 </body>
 </html>

@@ -167,7 +167,7 @@ async function run(...callbacks) {
  * const image = inlineHTML(`<img src="http://placehold.it/400">`, "img");
  * document.body.appendChild(image);
  */
-function inlineHTML(html, query=null) {
+function inlineHTML(html, query=null, ...mutators) {
     const div = document.createElement("div");
     // div.hidden = true;
     // document.body.appendChild(div);
@@ -177,7 +177,14 @@ function inlineHTML(html, query=null) {
     //console.log(fragment);
     // range.selectNode(div);
     div.appendChild(fragment);
-    return query ? div.querySelector(query) : div;
+
+    const divSelected = query ? div.querySelector(query) : div;
+
+    const divSelectedMutator = mutate(divSelected);
+
+    divSelectedMutator(...mutators);
+
+    return divSelected;
 };
 
 /**

@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>App 2</title>
+</head>
+<body>
+    <script src="https://badillosoft.github.io/mutator/mutator.js"></script>
+    <script src="https://badillosoft.github.io/mutator/mutator-learn.js"></script>
+
+    <script>
+        // Mutador (Sólo muta) [Stático o sin configuración] :: Mutador => Transformador
+        function clickAlertHello(element) {
+            element.addEventListener("click", () => {
+                alert("Hello");
+            });
+        }
+
+        function clearElements(element) {
+            while (element.firstChild) {
+                element.removeChild(element.firstChild);
+            }
+        }
+
+        // Generador de mutadores (Recibe configuración) [Dinámico o configurable] :: Meta-mutador => Generador
+        function clickAlert(text) {
+            return function (element) {
+                element.addEventListener("click", () => {
+                    alert(text);
+                });
+            };
+        }
+
+        // Creamos un generador que devuelve un mutador, que al recibir los eventos del elemento
+        // click, mouseover, mousemove y mouseout abra una venta con la imagen,
+        // muestre un preview de la imagen, acutalice la posición de la imagen al cursor
+        // y oculte el preview de la imagen respectivamente.
+        // - url <string> - La ruta de la imagen
+        // - distance <int=10> - Distancia en pixeles de la imagen al cursor en el preview
+        function imagePreviewAndWindow(url, distance=10, ...mutators) {
+            // Creamos una imagen con la url especificada
+            const image = inlineHTML(`<img src="${url}">`, "img");
+
+            // Creamos un mutador, a partir del generador domStyle con estilos específicos
+            const imageStyle = domStyle({ //domStyle => Generator
+                position: "absolute",
+                bottom: "0px",
+                left: "0px"
+            }); // imageStyle => Mutator
+
+            // Aplicamos manualemente el mutador imageStyle al elemento dom image
+            imageStyle(image);
+
+            // Los generadores deben devolver un mutador, es decir, una función que reciba
+            // el elmento a mutar, y le aplique las mutaciones
+            return element => {
+                element.addEventListener("click", () => {
+                    window.open(image.src, "Kittens",
+                        `location=no,width=${image.style.width},height=${image.style.height},scrollbars=yes,top=100,left=700,resizable = no`);
+                });
+
+                element.addEventListener("mouseover", () => {
+                    document.body.appendChild(image);
+                });
+
+                element.addEventListener("mousemove", e => {
+                    image.style.left = `${e.x + distance}px`;
+                    image.style.top = `${e.y + distance}px`;
+                });
+
+                element.addEventListener("mouseout", () => {
+                    document.body.removeChild(image);
+                });
+            };
+        }
+    </script>
+
+    <script>
+        const button = inlineHTML("<button>hello world</button>", "button");
+        const buttonMutador = mutate(button);
+
+        buttonMutador(button => {
+            const image = inlineHTML(`<img src="http://placekitten.com/200">`, "img");
+
+            const imageStyle = domStyle({ //domStyle => Generator
+                position: "absolute",
+                bottom: "0px",
+                left: "50%"
+            }); // imageStyle => Mutator
+
+            imageStyle(image);
+
+            button.addEventListener("click", () => {
+                window.open(image.src, "Kittens",
+                    "location=no,width=600,height=600,scrollbars=yes,top=100,left=700,resizable = no");
+            });
+
+            button.addEventListener("mouseover", () => {
+                document.body.appendChild(image);
+            });
+
+            button.addEventListener("mousemove", e => {
+                image.style.left = `${e.x + 20}px`;
+                image.style.top = `${e.y + 20}px`;
+            });
+
+            button.addEventListener("mouseout", () => {
+                document.body.removeChild(image);
+            });
+        });
+
+        buttonMutador(domTarget("body"));
+    </script>
+
+    <script>
+        const button_hello = inlineHTML("<button>Cat-Dog</button>", "button");
+        const url = "http://cdn.shopify.com/s/files/1/0701/0143/products/catdog_turnarounds_2web_1024x1024.png?v=1541729115"
+        imagePreviewAndWindow(url)(button_hello);
+        domTarget("body")(button_hello);
+    </script>
+</body>
+</html>
