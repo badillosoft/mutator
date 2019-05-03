@@ -1,26 +1,25 @@
-const _cache = {};
-
-async function run(...callbacks) {
-    let input = null;
-    for (let callback of callbacks) {
-        input = await callback(input);
-    }
-    return input;
-}
-
-async function loadComponents (names, baseURL="./", ext=".js") {
-    for (let name of (names || [])) {
-        let url = `${baseURL}/${name}${ext}`;
-        if (url in _cache) {
-            continue;
-        }
-        _cache[url] = true;
-        let script = document.createElement("script");
-        script.src = url;
-        document.body.prepend(script);
-        await new Promise(resolve => script.addEventListener("load", resolve));
-    }
-};
+// Mutator JS
+// Author: Alan Badillo Salas
+// Email: badillo.soft@hotmail.com
+// Github Account: badillosoft
+// Github Repository: https://github.com/badillosoft/mutator
+// Versión 1.0.0 (alpha)
+// Revitions:
+// - 2019/05/02 (v1.0 rev1)
+// * Add `mutate(element)`
+// * Add `async loadComponent(name[, baseURL, ext])`
+// * Add `async run([async ]callback)`
+// * Add `inlineHTML(html)`
+// * Add `domStyle(styles)`
+// * Add `domAttribute(attributes)`
+// * Add `domDataset(datasets[, raw])`
+// * Add `domClassList(...classNames)`
+// * Add `domMapEvent(event, channel[, mapper])`
+// * Add `domEventToState(event, state[, mapper, raw])`
+// * Add `domStateToEvent(state, channel[, mapper, raw])`
+// * Add `domProxyEvent(query, event, channel[, mapper])`
+// - 2019/05/02 (v1.0 rev2)
+// * Add this commentaries
 
 function mutate (element) {
     element = typeof element === "string" ? document.createElement(element) : element; 
@@ -33,6 +32,29 @@ function mutate (element) {
         return element;
     };
 };
+
+async function loadComponents (name, baseURL="./", ext=".js") {
+    window.mutator = window.mutator || {};
+    const cache = window.mutator.cache = window.mutator.cache || {};
+    const url = `${baseURL}/${name}${ext}`;
+    if (url in cache) {
+        continue;
+    }
+    cache[url] = new Date();
+    const script = document.createElement("script");
+    script.src = url;
+    document.body.prepend(script);
+    await new Promise(resolve => script.addEventListener("load", resolve));
+};
+
+
+async function run(...callbacks) {
+    let input = null;
+    for (let callback of callbacks) {
+        input = await callback(input);
+    }
+    return input;
+}
 
 function inlineHTML(html) {
     const div = document.createElement("div");
@@ -77,8 +99,8 @@ function domDataset(datasets, raw=false) {
 
 function domClassList(classNames) {
 	return element => {
-		for (let [key, value] of Object.entries(classNames || {})) {
-			element.classList[value ? "add" : "remove"](key);
+		for (let [className, mode] of Object.entries(classNames || {})) {
+			element.classList[mode](className);
 		}
 	};
 };
