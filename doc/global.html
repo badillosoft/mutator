@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Global</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Global</h1>
+
+    
+
+
+
+
+<section>
+
+<header>
+    
+        <h2></h2>
+        
+    
+</header>
+
+<article>
+    <div class="container-overview">
+    
+        
+
+        
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+        
+    
+    </div>
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+        <h3 class="subsection-title">Methods</h3>
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="load"><span class="type-signature">(async) </span>load<span class="signature">(name, baseURL, ext)</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Genera una etiqueta <code>script</code> que carga el archivo desde la url. La url base pordefecto es relativa al archivo HTML que llama a los componentes, sin embargo, se puedemandar a llamar cualquier CDN que almacene el script. Si la url ya ha sido consultadapreviamente será ignorada.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+        <th>Default</th>
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>name</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last">Nombre físico del componente (nombre del archivo o ruta)</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>baseURL</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+                <td class="default">
+                
+                    ./
+                
+                </td>
+            
+
+            <td class="description last">Url de la ruta anterios al nombre del archivo</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>ext</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+                <td class="default">
+                
+                    .js
+                
+                </td>
+            
+
+            <td class="description last">Extensión del archivo</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="mutator.js.html">mutator.js</a>, <a href="mutator.js.html#line101">line 101</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Examples</h5>
+    
+        <p class="code-caption">Cargar un <code>script</code> local</p>
+    
+    <pre class="prettyprint"><code>run(async () => { await load("example/Button"); const button = Button(); document.appendChild(button);})</code></pre>
+
+        <p class="code-caption">Cargar un <code>script</code> remoto</p>
+    
+    <pre class="prettyprint"><code>run(async () => { await load("https://cdn.jsdelivr.net/gh/badillosoft/mutator@master/example/Button"); const button = Button(); document.appendChild(button);})</code></pre>
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="mutate"><span class="type-signature"></span>mutate<span class="signature">(element)</span><span class="type-signature"> &rarr; {function}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    <strong>Aplicador</strong> Muta un elemento cualquiera mediante mutadores. La función encapsula un elemento y devuelve una segunda función que recibe en sus parámetrosmutadores (funciones de mutación) y se las aplica al elemento encapsulado.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>element</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">HTMLElement</span>
+|
+
+<span class="param-type">string</span>
+|
+
+<span class="param-type">any</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Elemento a mutar mediante los mutadores</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="mutator.js.html">mutator.js</a>, <a href="mutator.js.html#line70">line 70</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    Aplicador de mutadores
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">function</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+    <h5>Examples</h5>
+    
+        <p class="code-caption">Sintaxis</p>
+    
+    <pre class="prettyprint"><code>// mutate(element)(//   mutator_1(...config_1),//   mutator_2(...config_2),//   ...,//   mutator_N(...config_N),//);mutate("button")( domAttribute({ innerText: "click here!" }), domStyle({ color: "blue" }), domEventCallback("click", () => alert("hi")),);</code></pre>
+
+        <p class="code-caption">Crear un aplicador a partir de un <code>string</code> sin mutadores</p>
+    
+    <pre class="prettyprint"><code>const button = mutate("button")();document.body.appendChild(button);</code></pre>
+
+        <p class="code-caption">Crear un aplicador a partir de un <code>string</code> con mutadores</p>
+    
+    <pre class="prettyprint"><code>const button = mutate("button")( domStyle({ color: "cornflowerblue" }), domAttribute({ innerText: "Hello world" }),);document.body.appendChild(button);</code></pre>
+
+        <p class="code-caption">Crear una función que devuelva un aplicador configurado</p>
+    
+    <pre class="prettyprint"><code>const Button = (text, color) => mutate("button")( domStyle({ color }), domAttribute({ innerText: text }),);const button = Button("hello world", "crimson");document.body.appendChild(button);</code></pre>
+
+        <p class="code-caption">Aplicar mutadores a un elemento <code>DOM</code> existente</p>
+    
+    <pre class="prettyprint"><code>const button = document.createElement("button");mutate(button)( domAttribute({ innerText: "hey you!" }););document.body.appendChild(button);</code></pre>
+
+
+
+        
+    
+
+    
+
+    
+</article>
+
+</section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#load">load</a></li><li><a href="global.html#mutate">mutate</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Thu May 02 2019 23:12:16 GMT-0500 (GMT-05:00)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

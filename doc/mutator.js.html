@@ -1,4 +1,32 @@
-// Mutator JS
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: mutator.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: mutator.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>// Mutator JS
 // Author: Alan Badillo Salas
 // Email: badillo.soft@hotmail.com
 // Github Account: badillosoft
@@ -27,12 +55,12 @@
 // * Documentation of methods
 
 /**
- * <strong>Aplicador</strong> Muta un elemento cualquiera mediante mutadores. La función 
+ * &lt;strong>Aplicador&lt;/strong> Muta un elemento cualquiera mediante mutadores. La función 
  * encapsula un elemento y devuelve una segunda función que recibe en sus parámetros
  * mutadores (funciones de mutación) y se las aplica al elemento encapsulado.
  * @param {HTMLElement | string | any} element Elemento a mutar mediante los mutadores
  * @returns {function} Aplicador de mutadores
- * @example <caption>Sintaxis</caption>
+ * @example &lt;caption>Sintaxis&lt;/caption>
  * // mutate(element)(
  * //   mutator_1(...config_1),
  * //   mutator_2(...config_2),
@@ -44,23 +72,23 @@
  *  domStyle({ color: "blue" }),
  *  domEventCallback("click", () => alert("hi")),
  * );
- * @example <caption>Crear un aplicador a partir de un <code>string</code> sin mutadores</caption>
+ * @example &lt;caption>Crear un aplicador a partir de un &lt;code>string&lt;/code> sin mutadores&lt;/caption>
  * const button = mutate("button")();
  * document.body.appendChild(button);
- * @example <caption>Crear un aplicador a partir de un <code>string</code> con mutadores</caption>
+ * @example &lt;caption>Crear un aplicador a partir de un &lt;code>string&lt;/code> con mutadores&lt;/caption>
  * const button = mutate("button")(
  *  domStyle({ color: "cornflowerblue" }),
  *  domAttribute({ innerText: "Hello world" }),
  * );
  * document.body.appendChild(button);
- * @example <caption>Crear una función que devuelva un aplicador configurado</caption>
+ * @example &lt;caption>Crear una función que devuelva un aplicador configurado&lt;/caption>
  * const Button = (text, color) => mutate("button")(
  *  domStyle({ color }),
  *  domAttribute({ innerText: text }),
  * );
  * const button = Button("hello world", "crimson");
  * document.body.appendChild(button);
- * @example <caption>Aplicar mutadores a un elemento <code>DOM</code> existente</caption>
+ * @example &lt;caption>Aplicar mutadores a un elemento &lt;code>DOM&lt;/code> existente&lt;/caption>
  * const button = document.createElement("button");
  * mutate(button)(
  *  domAttribute({ innerText: "hey you!" });
@@ -78,20 +106,20 @@ function mutate(element) {
 };
 
 /**
- * Genera una etiqueta <code>script</code> que carga el archivo desde la url. La url base por
+ * Genera una etiqueta &lt;code>script&lt;/code> que carga el archivo desde la url. La url base por
  * defecto es relativa al archivo HTML que llama a los componentes, sin embargo, se puede
  * mandar a llamar cualquier CDN que almacene el script. Si la url ya ha sido consultada
  * previamente será ignorada.
  * @param {string} name Nombre físico del componente (nombre del archivo o ruta)
  * @param {string} baseURL Url de la ruta anterios al nombre del archivo
  * @param {string} ext Extensión del archivo
- * @example <caption>Cargar un <code>script</code> local</caption>
+ * @example &lt;caption>Cargar un &lt;code>script&lt;/code> local&lt;/caption>
  * run(async () => {
  *  await load("example/Button");
  *  const button = Button();
  *  document.appendChild(button);
  * })
- * @example <caption>Cargar un <code>script</code> remoto</caption>
+ * @example &lt;caption>Cargar un &lt;code>script&lt;/code> remoto&lt;/caption>
  * run(async () => {
  *  await load("https://cdn.jsdelivr.net/gh/badillosoft/mutator@master/example/Button");
  *  const button = Button();
@@ -209,10 +237,32 @@ function domStateToEvent(state, channel, mapper = (e => e), raw = false) {
 function domProxyEvent(query, event, channel, mapper = (e => e)) {
     return element => {
         const child = element.querySelectorAll(query);
-        child && child.addEventListener(event, e => {
+        child &amp;&amp; child.addEventListener(event, e => {
             element.dispatchEvent(new CustomEvent(channel, {
                 detail: mapper(e)
             }));
         });
     };
-}
+}</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#load">load</a></li><li><a href="global.html#mutate">mutate</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Thu May 02 2019 23:12:16 GMT-0500 (GMT-05:00)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
