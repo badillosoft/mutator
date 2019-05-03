@@ -22,6 +22,21 @@ function textContent(text) {
     };
 };
 
+function addImage(url) {
+    const image = document.createElement("img");
+    image.src = url;
+    return element => {
+        element.appendChild(image);
+    };
+};
+
+function galleryStyle() {
+    return element => {
+        element.style.display = "flex";
+        element.style.flexWrap = "warp";
+    };
+};
+
 function clickEvent(callback) {
     return element => {
         element.addEventListener("click", e => {
