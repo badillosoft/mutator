@@ -92,10 +92,6 @@ function mutate(element) {
     };
 };
 
-function mutatePipeline(element, pipeline=[]) {
-    return mutate(element)(...pipeline);
-}
-
 /**
  * Genera una etiqueta <code>script</code> que carga el archivo desde la url. La url base por
  * defecto es relativa al archivo HTML que llama a los componentes, sin embargo, se puede
@@ -280,16 +276,43 @@ function domMapEvent(event, channel, mapper = (e => e), activer = (() => true)) 
     };
 }
 
-function domEventToState(event, state, mapper = (e => e), raw = true) {
+function domEventToState(event, state, mapper = (e => e)) {
     return element => {
         element.addEventListener(event, e => {
+            const currentState = JSON.parse(element.dataset.state || "{}");
+
             const detail = e instanceof CustomEvent ? e.detail : e;
-            const result = mapper(detail);
-            domDataset({ [state]: JSON.stringify(result) }, raw)(element);
+            const value = mapper(detail);
+            
+            currentState[state] = value;
+
+            element.dataset.state = JSON.stringify(currentState);
+            
             element.dispatchEvent(new CustomEvent("@state", {
-                detail: Object.keys(element.dataset)
-                    .map(state => ({ [state]: JSON.parse(element.dataset[state]) }))
-                    .reduce((s, c) => Object.assign(s, { ...c }), {})
+                detail: currentState
+            }));
+        });
+    };
+}
+
+function domEventToLocalStorage(event, state, mapper = (e => e)) {
+    return element => {
+        element.addEventListener(event, e => {
+            const key = `${element.id || "any"}-state`;
+
+            const currentState = JSON.parse(localStorage.getItem(key) || "{}");
+
+            const detail = e instanceof CustomEvent ? e.detail : e;
+            const value = mapper(detail);
+            
+            currentState[state] = value;
+
+            localStorage.setItem(key, JSON.stringify(currentState));
+
+            // element.dataset.state = JSON.stringify(currentState);
+            
+            element.dispatchEvent(new CustomEvent("@state", {
+                detail: currentState
             }));
         });
     };
@@ -304,14 +327,18 @@ function domStateToEvent(state, channel, mapper = (e => e), raw = true) {
     };
 }
 
-function domProxyEvent(query, event, channel, mapper = (e => e)) {
+function domProxyEvent(query, event, channel, mapper = (e => e), activer=(() => true)) {
     return element => {
-        const child = element.querySelectorAll(query);
-        child && child.addEventListener(event, e => {
-            element.dispatchEvent(new CustomEvent(channel, {
-                detail: mapper(e)
-            }));
-        });
+        for (let child of (element.querySelectorAll(query) || [])) {
+            child.addEventListener(event, e => {
+                if (!activer(e)) {
+                    return;
+                }
+                element.dispatchEvent(new CustomEvent(channel, {
+                    detail: mapper(e)
+                }));
+            });
+        }
     };
 }
 
@@ -339,8 +366,7 @@ function domRegistry(registers) {
 function domDelegate(query, ...mutators) {
     return element => {
         for (let child of [...(element.querySelectorAll(query) || [])]) {
-            let childMutator = mutate(child);
-            childMutator(...mutators);
+            mutate(child)(mutators);
         }
     };
 }
@@ -362,4 +388,8 @@ function domCreator(tagName, domOptions = {}, target = null) {
     mutator(...(domOptions.mutators || []));
 
     return mutator();
+}
+
+function domComponent(element, ...pipeline) {
+    return mutate(element)(...pipeline);
 }

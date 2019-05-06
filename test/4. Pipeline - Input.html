@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Mutator JS - Pipeline</title>
+</head>
+
+<body>
+    <script src="../mutator.js"></script>
+    <script>
+        function Login(...mutators) {
+            const login = inlineHTML(`
+                <input data-id="user" placeholder="User">
+                <input data-id="password" type="password" placeholder="Password">
+                <button>login</button>
+            `);
+            return domComponent(login, [
+                domDataset({ state: JSON.stringify({ user: "", password: "" }) }),
+                domProxyEvent("[data-id='user']", "keyup", "#user-text", e => e.target.value),
+                domProxyEvent("[data-id='user']", "keyup", "#submit", e => e.target.value, e => e.key === "Enter" && e.target.value),
+                domProxyEvent("[data-id='password']", "keyup", "#password-text", e => e.target.value),
+                domProxyEvent("[data-id='password']", "keyup", "#submit", e => e.target.value, e => e.key === "Enter" && e.target.value),
+                domEventToLocalStorage("#user-text", "user"),
+                domEventToLocalStorage("#password-text", "password"),
+                domProxyEvent("button", "click", "#submit"),
+                domTarget("body"),
+                ...mutators
+            ]);
+        }
+
+        function LoginDark(...mutators) {
+            return Login([
+                domStyle({
+                    backgroundColor: "#222",
+                    padding: "20px"
+                }),
+                domDelegate("input", domStyle({
+                    backgroundColor: "#777",
+                    color: "yellow"
+                })),
+                domDelegate("button", domStyle({
+                    backgroundColor: "#777",
+                    color: "yellow"
+                })),
+                ...mutators
+            ]);
+        }
+
+        Login([
+            domAttribute({ id: "form-1", }),
+            domEventCallback("#submit", (e, self) => {
+                const credentials = JSON.parse(localStorage.getItem("form-1-state"));
+                console.log("credentials", credentials);
+            })
+        ])
+
+        LoginDark([
+            domAttribute({ id: "form-2", }),
+            domEventCallback("#submit", (e, self) => {
+                const credentials = JSON.parse(localStorage.getItem("form-2-state"));
+                console.log("credentials", credentials);
+            })
+        ])
+    </script>
+
+</body>
+
+</html>

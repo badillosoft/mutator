@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Mutator JS - Pipeline</title>
+</head>
+
+<body>
+    <script src="../mutator.js"></script>
+    <script>
+        function domComponent(options = {}, ...extraMutators) {
+            const { styles={}, attributes={}, datasets={}, mutators=[], target } = options;
+            return mutatePipeline(options.tagName || "div", [
+                domAttribute(attributes),
+                domStyle(styles),
+                domDataset(datasets),
+                domTarget(target),
+                ...mutators,
+                ...extraMutators
+            ]);
+        }
+
+        function Input(options={}) {
+            const { styles={}, attributes={}, datasets={}, mutators=[], target } = options;
+            return domComponent({
+                tagName: "input",
+                styles: {
+                    width: "100%",
+                    color: "crimson",
+                    ...attributes
+                },
+                attributes: {
+                    placeholder: "Sin texto",
+                    ...attributes
+                },
+                datasets: {
+                    ...datasets
+                },
+                mutators: [
+                    domMapEvent("keyup", "#change", e => e.target.value),
+                    domMapEvent("keyup", "#text", e => e.target.value, e => e.target.value),
+                    domMapEvent("keyup", "#empty", e => e.target.value, e => !e.target.value),
+                    domMapEvent("keyup", "#submit", e => e.target.value, e => e.key === "Enter"),
+                    domEventToState("#change", "text-change"),
+                    domEventToState("#submit", "text-submit"),
+                    domTarget(target),
+                    ...mutators
+                ]
+            });
+        }
+
+        function InputMonitor(input) {
+            return mutatePipeline(input, [
+                domEventCallback("@state", state => {
+                    console.log(state);
+                })
+            ]);
+        }
+
+        const input = Input({
+            mutators: [
+                domStyle({ color: "blue" })
+            ]
+        });
+        const input2 = Input();
+
+        InputMonitor(input);
+        InputMonitor(input2);
+    </script>
+
+</body>
+
+</html>
