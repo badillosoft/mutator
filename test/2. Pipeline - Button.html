@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Mutator JS - Pipeline</title>
+</head>
+
+<body>
+    <script src="../mutator.js"></script>
+    <script>
+        function Button({ text = "button", color = "crimson", width = "100%", target = null }) {
+            return mutatePipeline("button", [
+                domAttribute({ innerText: text }),
+                domStyle({ color: color, width }),
+                domEventToState("mousemove", "position", e => ({ x: e.x, y: e.y })),
+                domTarget(target)
+            ]);
+        }
+
+        const button = Button({ text: "Button 1" });
+        const button2 = Button({ color: "cornflowerblue" });
+        const button3 = Button({ width: "50%" });
+    </script>
+
+</body>
+
+</html>

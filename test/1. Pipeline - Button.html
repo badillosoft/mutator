@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Mutator JS - Pipeline</title>
+</head>
+<body>
+    <script src="../mutator.js"></script>
+    <script>
+        const ButtonPipeline = [
+            domAttribute({ innerText: "Hello world" }),
+            domStyle({ color: "crimson", width: "100%" }),
+            domEventCallback("click", () => alert("click")),
+            domEventToState("click", e => ({ x: e.x, y: e.y })),
+            domTarget()
+        ];
+
+        const button = document.createElement("button");
+        const button2 = document.createElement("button");
+        const button3 = document.createElement("button");
+
+        mutatePipeline(button, ButtonPipeline);
+        mutatePipeline(button2, ButtonPipeline);
+        mutatePipeline(button3, ButtonPipeline);
+    </script>
+
+</body>
+</html>

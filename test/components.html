@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Mutator JS - Test Components</title>
+</head>
+<body>
+    <script src="../mutator.js"></script>
+    <script src="../mutator-components.js"></script>
+    <script>
+        const input = Input({ 
+            style: InputMinimalistStyle(),
+            attribute: {
+                placeholder: "Hello"
+            }
+        });
+
+        domEventCallback("@state", state => {
+            console.log("input@state", state);
+        })(input);
+    </script>
+</body>
+</html>

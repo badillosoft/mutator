@@ -31,6 +31,8 @@
 // * Add `domTarget([target])`
 // * Add `domDelegate(query, ...mutators)`
 // * Add `domRegistry(registers)`
+// - 2019/05/06 (v1.0 rev7)
+// * Add `mutatePipeline(element, [mutators])`
 
 /**
  * <strong>Aplicador</strong> Muta un elemento cualquiera mediante mutadores. La función 
@@ -77,11 +79,22 @@ function mutate(element) {
     element = typeof element === "string" ? document.createElement(element) : element;
     return (...mutators) => {
         mutators
-            .reduce((muts, mut) => mut instanceof Array ? [...muts, ...mut] : [...muts, mut], [])
+            .reduce((muts, mut) => {
+                if (mut instanceof Array) {
+                    mutate(element)(...mut);
+                } else if (typeof mut === "function") {
+                    muts.push(mut);
+                }
+                return muts;
+            }, [])
             .forEach(mutator => mutator(element));
         return element;
     };
 };
+
+function mutatePipeline(element, pipeline=[]) {
+    return mutate(element)(...pipeline);
+}
 
 /**
  * Genera una etiqueta <code>script</code> que carga el archivo desde la url. La url base por
@@ -167,7 +180,7 @@ async function run(...callbacks) {
  * const image = inlineHTML(`<img src="http://placehold.it/400">`, "img");
  * document.body.appendChild(image);
  */
-function inlineHTML(html, query=null, ...mutators) {
+function inlineHTML(html, query = null, ...mutators) {
     const div = document.createElement("div");
     // div.hidden = true;
     // document.body.appendChild(div);
@@ -247,13 +260,18 @@ function domClassList(classNames) {
 
 function domEventCallback(event, callback) {
     return element => {
-        element.addEventListener(event, callback);
+        element.addEventListener(event, e => {
+            callback(e instanceof CustomEvent ? e.detail : e, element);
+        });
     };
 }
 
-function domMapEvent(event, channel, mapper = (e => e)) {
+function domMapEvent(event, channel, mapper = (e => e), activer = (() => true)) {
     return element => {
         element.addEventListener(event, e => {
+            if (!activer(e)) {
+                return;
+            }
             const detail = e instanceof CustomEvent ? e.detail : e;
             element.dispatchEvent(new CustomEvent(channel, {
                 detail: mapper(detail)
@@ -262,22 +280,27 @@ function domMapEvent(event, channel, mapper = (e => e)) {
     };
 }
 
-function domEventToState(event, state, mapper = (e => e), raw = false) {
+function domEventToState(event, state, mapper = (e => e), raw = true) {
     return element => {
         element.addEventListener(event, e => {
             const detail = e instanceof CustomEvent ? e.detail : e;
             const result = mapper(detail);
-            domDataset({ [state]: JSON.stringify(result) }, raw);
+            domDataset({ [state]: JSON.stringify(result) }, raw)(element);
+            element.dispatchEvent(new CustomEvent("@state", {
+                detail: Object.keys(element.dataset)
+                    .map(state => ({ [state]: JSON.parse(element.dataset[state]) }))
+                    .reduce((s, c) => Object.assign(s, { ...c }), {})
+            }));
         });
     };
 }
 
-function domStateToEvent(state, channel, mapper = (e => e), raw = false) {
+function domStateToEvent(state, channel, mapper = (e => e), raw = true) {
     return element => {
-        const detail = JSON.parse(element.getAttribute(raw ? `data-${state}` : state));
+        const detail = JSON.parse(raw ? element.getAttribute(`data-${state}`) : element.dataset[state]);
         element.dispatchEvent(new CustomEvent(channel, {
             detail: mapper(detail)
-        }))
+        }));
     };
 }
 
@@ -292,7 +315,7 @@ function domProxyEvent(query, event, channel, mapper = (e => e)) {
     };
 }
 
-function domTarget(target=null) {
+function domTarget(target = null) {
     return element => {
         if (typeof target === "string") {
             target = document.querySelector(target);
@@ -320,4 +343,23 @@ function domDelegate(query, ...mutators) {
             childMutator(...mutators);
         }
     };
+}
+
+function domCreator(tagName, domOptions = {}, target = null) {
+    const mutator = mutate(tagName);
+
+    mutator(domStyle(domOptions.style));
+    mutator(domAttribute(domOptions.attribute));
+    mutator(domClassList(domOptions.classList));
+    mutator(domDataset(domOptions.dataset));
+    for (let { event, channel, mapper, activer } of (domOptions.event || [])) {
+        mutator(domMapEvent(event, channel, mapper, activer));
+    }
+    for (let { event, state } of (domOptions.state || [])) {
+        mutator(domEventToState(event, state));
+    }
+    mutator(domTarget(target));
+    mutator(...(domOptions.mutators || []));
+
+    return mutator();
 }
